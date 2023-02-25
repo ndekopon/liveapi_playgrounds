@@ -1,0 +1,545 @@
+//////////////////////////////////////////////////////////////////////
+// Apex Legends Live API
+// Copyright 2023 Respawn Entertainment
+//
+// See readme.txt for more information on how to consume this file
+//////////////////////////////////////////////////////////////////////
+
+syntax = "proto3";
+
+package rtech.liveapi;
+
+//////////////////////////////////////////////////////////////////////
+// Intermediary messages:
+// Not used directly, but as part of other messages
+//////////////////////////////////////////////////////////////////////
+
+message Vector3
+{
+	float x = 1;
+	float y = 2;
+	float z = 3;
+}
+
+message Player
+{
+	string name = 1;
+	uint32 teamId = 2;
+	Vector3 pos = 3;
+	Vector3 angles = 4;
+	
+	uint32 currentHealth = 5;
+	uint32 maxHealth = 6;
+	uint32 shieldHealth = 7;
+	uint32 shieldMaxHealth = 8;
+	
+	string nucleusHash = 9;
+	string hardwareName = 10;
+	
+	string teamName = 11;
+	uint32 squadIndex = 12;
+	string character = 13;
+	string skin = 14;
+}
+
+message CustomMatch_LobbyPlayer
+{
+	string name = 1;
+	uint32 teamId = 2;
+	
+	string nucleusHash = 3;
+	string hardwareName = 4;
+}
+
+message Datacenter
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	string name 		= 3;
+}
+
+message Version
+{
+	uint32 major_num	= 1;
+	uint32 minor_num	= 2;
+	uint32 build_stamp	= 3;
+	string revision = 4;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Output messages:
+// Game events that describe the ongoing state of the match
+// Every message will have a timestamp and category 
+//////////////////////////////////////////////////////////////////////
+
+// Traffic initialization
+message Init
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	string gameVersion 	= 3;
+	Version apiVersion	= 4;
+}
+
+message CustomMatch_LobbyPlayers
+{
+	string playerToken 							= 1;
+	repeated CustomMatch_LobbyPlayer players 	= 2;
+}
+
+/////////////////////////////////////////
+// Observer Events
+/////////////////////////////////////////
+
+message ObserverSwitched
+{	
+	uint64 timestamp		= 1;
+	string category			= 2;
+	
+	Player observer 		= 3;
+	Player target 			= 4;
+	repeated Player targetTeam = 5;
+}
+
+/////////////////////////////////////////
+// Match Information
+/////////////////////////////////////////
+
+message MatchSetup
+{
+	uint64 timestamp		= 1;
+	string category			= 2;
+
+	string map 				= 3;
+	string playlistName 	= 4;
+	string playlistDesc 	= 5;
+	Datacenter datacenter 	= 6;
+	bool aimAssistOn		= 7;
+	bool anonymousMode		= 8;
+	string serverId			= 9;
+}
+
+message GameStateChanged
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	string state 		= 3;
+}
+
+message CharacterSelected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player 		= 3;
+}
+
+message MatchStateEnd
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	string state 		= 3;
+	repeated Player winners = 4;
+}
+
+message RingStartClosing
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	uint32 stage 		= 3;
+	Vector3 center		= 4;
+	float currentRadius = 5;
+	float endRadius		= 6;
+	float shrinkDuration= 7;
+}
+
+message RingFinishedClosing
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	uint32 stage 		= 3;
+	Vector3 center		= 4;
+	float currentRadius = 5;
+	float shrinkDuration= 7;
+}
+
+message PlayerConnected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player 		= 3;
+}
+
+message PlayerDisconnected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player 		= 3;
+	bool canReconnect	= 4;
+}
+
+message PlayerStatChanged
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player 		= 3;
+
+	string statName		= 4;
+	uint64 newValue		= 5;
+}
+
+
+/////////////////////////////////////////
+// Combat events
+/////////////////////////////////////////
+
+message PlayerDamaged
+{
+	uint64 timestamp		= 1;
+	string category			= 2;
+
+	Player attacker			= 3;
+	Player victim			= 4;
+	string weapon			= 5;
+	uint64 damageInflicted 	= 6;
+}
+
+message PlayerKilled
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player attacker		= 3;
+	Player victim		= 4;
+	Player awardedTo	= 5;
+	string weapon		= 6;
+}
+
+message PlayerDowned
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player attacker		= 3;
+	Player victim		= 4;
+	string weapon		= 5;
+}
+
+message PlayerAssist
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player assistant	= 3;
+	Player victim		= 4;
+	string weapon		= 5;
+}
+
+message SquadEliminated
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	repeated Player players = 3;
+}
+
+message GibraltarShieldAbsorbed
+{
+	uint64 timestamp		= 1;
+	string category			= 2;
+	
+	Player attacker			= 3;
+	Player victim			= 4;
+	uint64 damageInflicted 	= 6;
+}
+
+
+/////////////////////////////////////////
+// Interaction events
+/////////////////////////////////////////
+
+message PlayerRespawnTeam
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string respawned	= 4;
+}
+
+message PlayerRevive
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string revived		= 4;
+}
+
+message ArenasItemSelected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+	int32  quantity		= 5;
+}
+
+message ArenasItemDeselected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+	int32  quantity		= 5;
+}
+
+message InventoryPickUp
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+	int32  quantity		= 5;
+}
+
+message InventoryDrop
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+	int32  quantity		= 5;
+	repeated string extraData = 6;
+}
+
+message InventoryUse
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+	int32  quantity		= 5;
+}
+
+message BannerCollected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	Player collected	= 4;
+}
+
+message PlayerAbilityUsed
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string linkedEntity = 4;
+}
+
+message ZiplineUsed
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string linkedEntity = 4;
+}
+
+message GrenadeThrown
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string linkedEntity = 4;
+}
+
+message BlackMarketAction
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string item			= 4;
+}
+
+message WraithPortal
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+}
+
+message AmmoUsed
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string ammoType		= 4;
+	uint32 amountUsed	= 5;
+	uint32 oldAmmoCount	= 6;
+	uint32 newAmmoCount = 7;
+}
+
+message WeaponSwitched
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+	
+	Player player		= 3;
+	string oldWeapon	= 4;
+	string newWeapon	= 5;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Input messages:
+// Used by observers to programmatically interact with the game
+//////////////////////////////////////////////////////////////////////
+
+
+enum PlayerOfInterest
+{
+	UNSPECIFIED = 0;
+
+	// cycle through known Players in a team
+	NEXT = 1;
+	PREVIOUS = 2;
+
+	// Go to an interesting player
+	KILL_LEADER = 3;
+	CLOSEST_ENEMY = 4;
+	CLOSEST_PLAYER = 5;
+	LATEST_ATTACKER = 6;
+}
+
+message ChangeCamera
+{
+	oneof target
+	{
+		PlayerOfInterest poi = 1;
+	}
+}
+
+message PauseToggle
+{
+	float preTimer = 1;
+}
+
+message CustomMatch_CreateLobby 
+{
+}
+
+message CustomMatch_JoinLobby 
+{
+	string roleToken = 1;
+}
+
+message CustomMatch_LeaveLobby 
+{
+}
+
+message CustomMatch_SetReady 
+{
+	bool isReady = 1;
+}
+
+message CustomMatch_GetLobbyPlayers
+{
+}
+
+message CustomMatch_SetMatchmaking
+{
+	bool enabled = 1;
+}
+
+message CustomMatch_SetTeam
+{
+	int32 teamId = 1;
+	string targetHardwareName = 2;
+	string targetNucleusHash = 3;
+}
+
+message CustomMatch_KickPlayer
+{
+	string targetHardwareName = 1;
+	string targetNucleusHash = 2;
+}
+
+message CustomMatch_SetSettings
+{
+	string playlistName = 1;
+	bool adminChat = 2;
+	bool teamRename = 3;
+	bool selfAssign = 4;
+	bool aimAssist = 5;
+	bool anonMode = 6;
+}
+
+message CustomMatch_SendChat
+{
+	string text = 1;
+}
+
+message Request
+{
+	bool withAck 	= 1;
+
+	oneof actions
+	{
+		ChangeCamera	changeCam = 4;
+		PauseToggle		pauseToggle = 5;
+		
+		// custom match 10 -> 30
+		CustomMatch_CreateLobby customMatch_CreateLobby = 10;
+		CustomMatch_JoinLobby customMatch_JoinLobby = 11;
+		CustomMatch_LeaveLobby customMatch_LeaveLobby = 12;
+		CustomMatch_SetReady customMatch_SetReady = 13;
+		CustomMatch_SetMatchmaking customMatch_SetMatchmaking = 14;
+		CustomMatch_SetTeam customMatch_SetTeam = 15;
+		CustomMatch_KickPlayer customMatch_KickPlayer = 16;
+		CustomMatch_SetSettings customMatch_SetSettings = 17;
+		CustomMatch_SendChat customMatch_SendChat = 18;
+		CustomMatch_GetLobbyPlayers customMatch_GetLobbyPlayers = 19;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
+// Reply messages:
+// Used by the game to send data to any connected clients
+//////////////////////////////////////////////////////////////////////
+
+import "google/protobuf/any.proto";
+
+message Response
+{
+	bool success = 1;
+	google.protobuf.Any result	= 2;
+}
+
+// envelope for all LiveAPI Events
+message LiveAPIEvent
+{
+	fixed32 event_size = 1;
+	google.protobuf.Any gameMessage		= 3;
+}
+
