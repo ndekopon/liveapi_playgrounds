@@ -15,6 +15,19 @@ message Init
 
 ## データの例
 
+### Version(2023_02_21_10_58)
+
+```.text
+timestamp: 1677626398
+category: "init"
+gameVersion: "Build ID: R5pc_r5-160_J29_CL4008794_2023_02_21_10_58"
+apiVersion {
+  major_num: 2
+  minor_num: 1
+  build_stamp: 887211
+}
+```
+
 ### Version(2023_02_14_10_52)
 
 ```.text
