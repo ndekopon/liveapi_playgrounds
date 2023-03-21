@@ -1,1 +1,2 @@
-%gameStateChangedõ…å PickLoadout
+[
+2type.googleapis.com/rtech.liveapi.GameStateChanged%õ…å gameStateChangedPickLoadout
