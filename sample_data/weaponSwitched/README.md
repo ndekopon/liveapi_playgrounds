@@ -2,6 +2,20 @@
 
 武器切り替え
 
+## 定義
+
+```.text
+message WeaponSwitched
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player		= 3;
+	string oldWeapon	= 4;
+	string newWeapon	= 5;
+}
+```
+
 ## 例
 
 ```.text
