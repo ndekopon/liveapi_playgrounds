@@ -29,31 +29,61 @@ A simple `config.json` is located in this folder for reference. To use the JSON 
 As mentioned, command line parameters can also be used to configure the Live API. These will take precedence over any configuration values in the config.json file being read. Some of the following command line parameters can be passed into the game
 
 	cl_liveapi_enabled (default "0")
-	   Enable Live API functionality
+	   Enable Live API functionality.
 
 	cl_liveapi_allow_requests (default "1")
 	   Allow processing and running any incoming requests.
 
 	cl_liveapi_pretty_print_log (default "0")
-	   Makes the JSON output more human-readable
+	   Makes the JSON output more human-readable.
 
 	cl_liveapi_use_protobuf (default "1")
 	   Use protobuf as the serialization format. Otherwise, use JSON.
 
 	cl_liveapi_ws_keepalive (default "30")
-	   Interval of time to send Pong to any connected server
+	   Interval of time to send Pong to any connected server.
 
 	cl_liveapi_ws_retry_count (default "5")
-	   Amount of times to retry connecting before marking the connection as unavailable
+	   Amount of times to retry connecting before marking the connection as unavailable.
 
 	cl_liveapi_ws_retry_time (default "30")
-	   Time between retries 
+	   Time between retries.
 
 	cl_liveapi_ws_servers (default "")
-	   Comma separated list of addresses to connect to. Must be in the form 'ws://domain.com:portNum'
+	   Comma separated list of addresses to connect to. Must be in the form 'ws://domain.com:portNum'.
 
 	cl_liveapi_ws_timeout (default "300")
-	   Websocket connection timeout in seconds
+	   Websocket connection timeout in seconds.
+	   
+	cl_liveapi_ws_lax_ssl (default "1")
+	   Skip SSL certificate validation for all WSS connections. Allows the use of self-signed certificates.
+	   
+	cl_liveapi_ws_event_delay (default "")
+	   Delay (in seconds) to be used when broadcasting an event to all connections.
+	   
+	cl_liveapi_requests_psk (default "")
+	    A preshared key that will be used to validate requests. When set, if a request is received with a key that does not match, it is rejected.
+		
+	cl_liveapi_requests_psk_tries (default "10")
+		Attempts allowed when making a request with the wrong key before the connection is dropped. It will always be minimum 10 tries.
+
+# Sending and Receiving messages over WebSocket
+
+The `events.proto` file describes all the messages in use by LiveAPI with additional annotations regarding their behaviour as comments over each defined message. While LiveAPI can be used primarily to listen for in-game events, websockets allows for bidirectional communication between an app and the game. 
+
+To simplify how messages are read and received, LiveAPI exposes two types of envelope messages: `LiveAPIEvent` and `Request`. As the name implies, the `Request` message is what a websocket server application would send in order to have the game fulfill an action. The `LiveAPIEvent` is the envelope for all messages from the game to any websocket connections. 
+
+Note that when using JSON as the primary data transfer method, a `LiveAPIEvent` message is human-readable and not wrapped in the LiveAPIEvent envelope. This is for backwards compatibility with older applications. LiveAPI requests made using JSON must still be sent over a `Request` message type. It is recommended to use Protobuf bindings to ensure serialization is done correctly, even when using JSON.
+
+When using Protobuf and WebSockets, it is important to unpack/pack messages correctly. To read a `LiveAPIEvent` message in protobuf, it is necessary to obtain the type of the `gameMessage` and call the unpack function with an instance of that type. Before proceeding, familiarize yourself with the proto3 `Any` field type at https://protobuf.dev/programming-guides/proto3/#any and make sure to consult the documentation for the programming language in use.
+
+To generate a protobuf `Request` message, a single action must be specified and any fields for that message should be appropriately populated. Consult the protobuf documentation on using the oneof fields https://protobuf.dev/programming-guides/proto3/#oneof. LiveAPI is able to acknowledge successful requests upon receipt. These are sent in `Response` messages and are only sent to the connection that initiated the request. Note that receiving a response does not mean the Request has completed. This is a great tool to use during development to ensure requests are well crafted.
+
+Finally, certain requests may trigger game events upon successful completion. For example, a `Request` with a `changeCam` action will result in a `LiveAPIEvent` that has an `ObserverSwitched` gameMessage as the payload.
+
+# Support for Secure WebSockets (wss)
+
+Secure WebSockets support is available for Live API to avoid transferring sensitive data over plaintext. Applications intending to use WSS must be listening over port 443, as this is the only acceptable port for secure negotiation. By default, there is a lax SSL policy to allow a wide variety of certificates to be used, including those which are self-signed. This is for ease of integration but may not be suitable in production scenarios or where the network channel is not trusted (for example, over the internet or a local datacenter connection). When lax SSL policy is disabled, only certificates from the VeriSign and DigiCert CAs can be validated appropriately and secure connections will fail otherwise. It is recommended to leverage the preshared key feature (cl_liveapi_requests_psk) alongside WSS to guarantee requests are always made by trusted parties.
 
 # FAQ
 
@@ -67,6 +97,9 @@ While previously it was possible to read gameplay events from a JSON file on dis
 
 - Can I connect to multiple servers?
 Yes! Theoretically, any amount of servers can be specified through the json config file. Please note, however, that connecting to more than one server may affect the game's performance.
+
+- Why do I sometimes get "Could not parse your request correctly!" when it is correctly formed?
+If you are sending many requests within an extremely short amount of time (e.g. dozens of requests per second) the WebSocket library of either server or client may batch the requests in an attempt to efficiently process/transport them. This batching can cause issues when reconstructing the requests and has been observed when making requests in JSON format. Switch to protobuf or try reducing the frequency of requests to mitigate the problem.
 
 - Will you be adding more events or API request methods?
 Yes! Stay tuned!
