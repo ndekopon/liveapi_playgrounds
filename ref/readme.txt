@@ -66,6 +66,9 @@ As mentioned, command line parameters can also be used to configure the Live API
 		
 	cl_liveapi_requests_psk_tries (default "10")
 		Attempts allowed when making a request with the wrong key before the connection is dropped. It will always be minimum 10 tries.
+		
+	cl_liveapi_session_name (default "")
+		Session name that can be used in WebSocket connections to identify this client
 
 # Sending and Receiving messages over WebSocket
 

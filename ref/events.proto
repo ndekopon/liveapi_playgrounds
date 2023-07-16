@@ -84,6 +84,10 @@ message Init
 	
 	string gameVersion 	= 3;
 	Version apiVersion	= 4;
+	string platform		= 5;
+	
+	// Named specified by `cl_liveapi_session_name`
+	string name		= 6;
 }
 
 // Response to the CustomMatch_GetLobbyPlayers
@@ -483,6 +487,7 @@ message WeaponSwitched
 	string newWeapon	= 5;
 }
 
+
 //////////////////////////////////////////////////////////////////////
 // Input messages:
 // Used by observers to programmatically interact with the game
@@ -682,4 +687,3 @@ message LiveAPIEvent
 	fixed32 event_size = 1;
 	google.protobuf.Any gameMessage		= 3;
 }
-
