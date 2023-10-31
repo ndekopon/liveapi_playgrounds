@@ -213,6 +213,7 @@ message PlayerDisconnected
 	
 	Player player 		= 3;
 	bool canReconnect	= 4;
+	bool isAlive		= 5;
 }
 
 // Generic event for a change in the player stats
@@ -596,6 +597,14 @@ message CustomMatch_SetSettings
 	bool anonMode = 6;
 }
 
+// Request to set the name of a team in custom match lobby
+// Requires special access and is subject to text filtering
+message CustomMatch_SetTeamName
+{
+	int32 teamId = 1;
+	string teamName = 2;
+}
+
 // Request to programatically send a chat message to the entire custom match lobby
 message CustomMatch_SendChat
 {
@@ -638,6 +647,7 @@ message Request
 		CustomMatch_SetSettings customMatch_SetSettings = 17;
 		CustomMatch_SendChat customMatch_SendChat = 18;
 		CustomMatch_GetLobbyPlayers customMatch_GetLobbyPlayers = 19;
+		CustomMatch_SetTeamName customMatch_SetTeamName = 20;
 
 	}
 }
