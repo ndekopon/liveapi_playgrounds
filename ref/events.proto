@@ -69,6 +69,21 @@ message Version
 	string revision = 4;
 }
 
+message InventoryItem
+{
+	int32 quantity 	= 1;
+	string item 	= 2;
+
+	// any mods or additional info on the item
+	string extraData = 3;
+}
+
+message LoadoutConfiguration
+{
+	repeated InventoryItem weapons 		= 1;
+	repeated InventoryItem equipment 	= 2;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Output messages:
 // Game events that describe the ongoing state of the match
@@ -140,6 +155,8 @@ message MatchSetup
 	bool aimAssistOn		= 7;
 	bool anonymousMode		= 8;
 	string serverId			= 9;
+
+	LoadoutConfiguration startingLoadout = 10;
 }
 
 // Sent whenever the match changes phases (e.g. prematch, playing)
@@ -229,6 +246,17 @@ message PlayerStatChanged
 	uint32 newValue		= 5;
 }
 
+// Event used to notify when a player goes above their current tier level
+// Tier levels start at 1. Following this event, players may have Upgrades to their legend
+// Selection of upgrades will produce a separate `LegendUpgradeSelected` event
+message PlayerUpgradeTierChanged
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player 		= 3;
+	int32  level		= 4;
+}
 
 /////////////////////////////////////////
 // Combat events
@@ -248,7 +276,8 @@ message PlayerDamaged
 }
 
 // Sent when a player is killed. Details are similar to PlayerDamaged event
-// The `awardedTo` field describes the player that the kill is given to
+// The `awardedTo` field has been deprecated for simplicity.
+// Listen for the `PlayerStatChanged` message to determine which player the kill was awarded to.
 message PlayerKilled
 {
 	uint64 timestamp	= 1;
@@ -256,7 +285,7 @@ message PlayerKilled
 
 	Player attacker		= 3;
 	Player victim		= 4;
-	Player awardedTo	= 5;
+	reserved		  	  5; // formerly `Player awardedTo`
 	string weapon		= 6;
 }
 
@@ -306,6 +335,19 @@ message GibraltarShieldAbsorbed
 	uint32 damageInflicted 	= 6;
 }
 
+// Occurs when Revenant, while using his Forged Shadows ultimate, takes any enemy damage
+// This event is distinct from `PlayerDamaged` since the player may receive no actual damage if the shadow is able to absorb it
+// The field `damageInflicted` will indicate how much damage (in total) was dealt
+// If there is any leftover damage that goes affects the player, that amount will be what is registered in a different `PlayerDamaged` event
+message RevenantForgedShadowDamaged
+{
+	uint64 timestamp		= 1;
+	string category			= 2;
+	
+	Player attacker			= 3;
+	Player victim			= 4;
+	uint32 damageInflicted 	= 6;
+}
 
 /////////////////////////////////////////
 // Interaction events
@@ -410,6 +452,19 @@ message PlayerAbilityUsed
 	
 	Player player		= 3;
 	string linkedEntity = 4;
+}
+
+// Signals that a player has selected an upgrade at a particular tier level
+// Updates to their tier level will be sent as a PlayerUpgradeTierChanged event
+message LegendUpgradeSelected
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player 		= 3;
+	string upgradeName	= 4;
+	string upgradeDesc  = 5;
+	int32  level		= 6;
 }
 
 // Indicates that a player has started using the zipline
@@ -585,8 +640,9 @@ message CustomMatch_KickPlayer
 	string targetNucleusHash = 2;
 }
 
-// Request to alter any part of the custom match lobby
-// Several settings may be changed at once for convenience
+// Request to alter the settings of a custom match lobby
+// Your request should specify all fields being set with the new value
+// For convinience, call `CustomMatch_GetSettings` to get the full state of settings
 message CustomMatch_SetSettings
 {
 	string playlistName = 1;
@@ -595,6 +651,12 @@ message CustomMatch_SetSettings
 	bool selfAssign = 4;
 	bool aimAssist = 5;
 	bool anonMode = 6;
+}
+
+// Review all the current settings. This request will be replied to with
+// `CustomMatch_SetSettings` from which you can modify and reply with any new values for your convenience
+message CustomMatch_GetSettings
+{
 }
 
 // Request to set the name of a team in custom match lobby
@@ -648,6 +710,7 @@ message Request
 		CustomMatch_SendChat customMatch_SendChat = 18;
 		CustomMatch_GetLobbyPlayers customMatch_GetLobbyPlayers = 19;
 		CustomMatch_SetTeamName customMatch_SetTeamName = 20;
+		CustomMatch_GetSettings customMatch_GetSettings = 21;
 
 	}
 }
