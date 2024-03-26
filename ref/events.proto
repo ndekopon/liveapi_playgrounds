@@ -276,8 +276,7 @@ message PlayerDamaged
 }
 
 // Sent when a player is killed. Details are similar to PlayerDamaged event
-// The `awardedTo` field has been deprecated for simplicity.
-// Listen for the `PlayerStatChanged` message to determine which player the kill was awarded to.
+// The `awardedTo` field describes the player that the kill is given to
 message PlayerKilled
 {
 	uint64 timestamp	= 1;
@@ -285,7 +284,7 @@ message PlayerKilled
 
 	Player attacker		= 3;
 	Player victim		= 4;
-	reserved		  	  5; // formerly `Player awardedTo`
+	Player awardedTo  	= 5;
 	string weapon		= 6;
 }
 
@@ -623,7 +622,7 @@ message CustomMatch_SetMatchmaking
 }
 
 // Request to assign a particular player to a specific team
-// Note that the `targetHardwareName`` and `targetNucleusHash`` can be obtained from a prior request to CustomMatch_GetLobbyPlayers
+// Note that the `targetHardwareName` and `targetNucleusHash` can be obtained from a prior request to CustomMatch_GetLobbyPlayers
 // If the parameters do not match any lobby player, the request is ignored
 // The `teamId` is across the entire lobby. Meaning, observers have a teamId of 0 and match players will be teamId of 1 and upwards
 message CustomMatch_SetTeam
