@@ -666,11 +666,20 @@ message CustomMatch_SetTeamName
 	string teamName = 2;
 }
 
+// Select a pre-determined spawn point in the map for the team.
+// Requires special access. Set spawnPoint to -1 to unset.
+message CustomMatch_SetSpawnPoint
+{
+	int32 teamId = 1;
+	int32 spawnPoint = 2;
+}
+
 // Request to programatically send a chat message to the entire custom match lobby
 message CustomMatch_SendChat
 {
 	string text = 1;
 }
+
 
 // Envelope message for any Live API request
 // This allows a single uniform data structure for requests to be made and for the game to receive them
@@ -710,6 +719,7 @@ message Request
 		CustomMatch_GetLobbyPlayers customMatch_GetLobbyPlayers = 19;
 		CustomMatch_SetTeamName customMatch_SetTeamName = 20;
 		CustomMatch_GetSettings customMatch_GetSettings = 21;
+		CustomMatch_SetSpawnPoint customMatch_SetSpawnPoint = 22;
 
 	}
 }
