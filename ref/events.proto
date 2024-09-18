@@ -360,7 +360,8 @@ message PlayerRespawnTeam
 	string category		= 2;
 	
 	Player player		= 3;
-	string respawned	= 4;
+	string respawned	= 4 [deprecated=true]; // `respawned` field is being deprecated in favor of `teammates`
+	repeated Player respawnedTeammates = 5;
 }
 
 // Occurs when a player finishes assisting a downed player
