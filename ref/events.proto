@@ -53,6 +53,13 @@ message CustomMatch_LobbyPlayer
 	string hardwareName = 4;
 }
 
+message CustomMatch_Team
+{
+	uint32 id = 1;
+	string name = 2;
+	int32 spawnPoint = 3; // can be -1 if not set
+}
+
 message Datacenter
 {
 	uint64 timestamp	= 1;
@@ -106,11 +113,12 @@ message Init
 }
 
 // Response to the CustomMatch_GetLobbyPlayers
-// Contains the list of all players in the lobby
+// Contains the list of all players in the lobby along with the teams, their names and spawnPoints if selected
 message CustomMatch_LobbyPlayers
 {
 	string playerToken 							= 1;
 	repeated CustomMatch_LobbyPlayer players 	= 2;
+	repeated CustomMatch_Team		 teams		= 3;
 }
 
 /////////////////////////////////////////
@@ -322,6 +330,19 @@ message SquadEliminated
 	repeated Player players = 3;
 }
 
+// Sent as soon as a player's ultimate is fully charged
+// Note that some ultimates may be ready to be used before fully charged
+// For convenience, the ultimate is passed as the linkedEntity.
+// For example: `linkedEntity: "Ultimate (Rolling Thunder)"` for Bangalore's Ultimate ability
+message PlayerUltimateCharged
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player		= 3;
+	string linkedEntity	= 4;
+}
+
 // Occurs when Gibraltars shield has taken any enemy damage
 // The field `damageInflicted` will indicate how much was absorbed by the shield
 message GibraltarShieldAbsorbed
@@ -360,7 +381,7 @@ message PlayerRespawnTeam
 	string category		= 2;
 	
 	Player player		= 3;
-	string respawned	= 4 [deprecated=true]; // `respawned` field is being deprecated in favor of `teammates`
+	string respawned	= 4; // `respawned` field is being deprecated in favor of `teammates`
 	repeated Player respawnedTeammates = 5;
 }
 
@@ -550,7 +571,7 @@ message WeaponSwitched
 //////////////////////////////////////////////////////////////////////
 
 
-// Enum used to quickly described the target of a ChangeCamera operation
+// Enum used to describe the target of a ChangeCamera operation
 enum PlayerOfInterest
 {
 	UNSPECIFIED = 0;
@@ -675,6 +696,25 @@ message CustomMatch_SetSpawnPoint
 	int32 spawnPoint = 2;
 }
 
+// Enum used to segment the current map into main areas
+enum MapRegion
+{ 
+	TOP_LEFT 		= 0;
+	TOP_RIGHT 		= 1;
+	BOTTOM_LEFT		= 2;
+	BOTTOM_RIGHT	= 3;
+	CENTER 			= 4;
+	REGIONS_COUNT 	= 5;
+};
+
+// Request to override ring end and exclude a particular area
+// Requires special access. Set sectionToExclude to REGIONS_COUNT or higher to reset.
+// It is recommended to reset exclusions after every match as they persist in the match settings
+message CustomMatch_SetEndRingExclusion
+{
+	MapRegion sectionToExclude = 1;
+}
+
 // Request to programatically send a chat message to the entire custom match lobby
 message CustomMatch_SendChat
 {
@@ -721,6 +761,7 @@ message Request
 		CustomMatch_SetTeamName customMatch_SetTeamName = 20;
 		CustomMatch_GetSettings customMatch_GetSettings = 21;
 		CustomMatch_SetSpawnPoint customMatch_SetSpawnPoint = 22;
+		CustomMatch_SetEndRingExclusion customMatch_SetEndRingExclusion = 23;
 
 	}
 }
