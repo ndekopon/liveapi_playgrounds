@@ -60,6 +60,13 @@ message CustomMatch_Team
 	int32 spawnPoint = 3; // can be -1 if not set
 }
 
+message LegendMatchStatus
+{
+	string name = 1;
+	string reference = 2;
+	bool banned = 3;
+}
+
 message Datacenter
 {
 	uint64 timestamp	= 1;
@@ -91,10 +98,17 @@ message LoadoutConfiguration
 	repeated InventoryItem equipment 	= 2;
 }
 
+message PauseStateChangeNotification
+{
+	uint64 	timestamp 	= 1;
+	bool 	isPausing 	= 2;
+	uint64 	timeLeft 	= 3;
+	string	message 	= 4;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Output messages:
-// Game events that describe the ongoing state of the match
-// Every message will have a timestamp and category 
+// Game events that describe the ongoing state of the match or the lobby
 //////////////////////////////////////////////////////////////////////
 
 // Traffic initialization
@@ -119,6 +133,13 @@ message CustomMatch_LobbyPlayers
 	string playerToken 							= 1;
 	repeated CustomMatch_LobbyPlayer players 	= 2;
 	repeated CustomMatch_Team		 teams		= 3;
+}
+
+// Response to CustomMatch_GetLegendBanStatus
+// Contains a list of all legends, their localized name and whether or not they have been banned
+message CustomMatch_LegendBanStatus
+{
+	repeated LegendMatchStatus legends = 3;
 }
 
 /////////////////////////////////////////
@@ -604,6 +625,7 @@ message ChangeCamera
 }
 
 // Request message to toggle pause in a match type that supports it
+// After submitting this request, listen for PauseStateChangeNotification messages for specific information from the server
 message PauseToggle
 {
 	float preTimer = 1;
@@ -715,6 +737,22 @@ message CustomMatch_SetEndRingExclusion
 	MapRegion sectionToExclude = 1;
 }
 
+// Request to review the list of banned legends for this Custom Match.
+// The response to this event is the message CustomMatch_LegendBanStatus
+message CustomMatch_GetLegendBanStatus
+{
+}
+
+// Request to set the banned legends in this match. This should be a comma-separated list and the list of all banned legends must be passed in each time in this request
+// In other words, the list that this request contains will always replace the Custom Match setting. Banned legends will persist with the Custom Match lobby. 
+// To reset the list of banned legends, send this request with an empty list
+// To obtain valid values for this list, use the CustomMatch_GetLegendBanStatus. The field LegendMatchStatus.reference is what can be submitted in this API call
+// Note that these strings are case-sensitive.
+message CustomMatch_SetLegendBan
+{
+	repeated string legendRefs = 1;
+}
+
 // Request to programatically send a chat message to the entire custom match lobby
 message CustomMatch_SendChat
 {
@@ -762,6 +800,8 @@ message Request
 		CustomMatch_GetSettings customMatch_GetSettings = 21;
 		CustomMatch_SetSpawnPoint customMatch_SetSpawnPoint = 22;
 		CustomMatch_SetEndRingExclusion customMatch_SetEndRingExclusion = 23;
+		CustomMatch_GetLegendBanStatus customMatch_GetLegendBanStatus = 24;
+		CustomMatch_SetLegendBan customMatch_SetLegendBan = 25;
 
 	}
 }

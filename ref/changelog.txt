@@ -1,0 +1,17 @@
+# Changelog
+
+All notable changes to this API will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+
+## LiveAPI 2.3 - Season 24.1 - 2025-03-25
+
+### Added
+
+- `PauseStateChangeNotification` message to broadcast when a `PauseToggle` has been submitted
+- Support Custom Match Legend Ban feature including `CustomMatch_SetLegendBan` and  `CustomMatch_GetLegendBanStatus` requests as well as `CustomMatch_LegendBanStatus` and `LegendMatchStatus` messages.
+	- As mentioned in the documentation, call the `CustomMatch_GetLegendBanStatus` to see what values are acceptable
+	
+### Changed
+
+- `PauseToggle` messages are replied to with the `PauseStateChangeNotification` message instead of the generic `RequestStatus` message.

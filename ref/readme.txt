@@ -104,8 +104,11 @@ Yes! Theoretically, any amount of servers can be specified through the json conf
 - Why do I sometimes get "Could not parse your request correctly!" when it is correctly formed?
 If you are sending many requests within an extremely short amount of time (e.g. dozens of requests per second) the WebSocket library of either server or client may batch the requests in an attempt to efficiently process/transport them. This batching can cause issues when reconstructing the requests and has been observed when making requests in JSON format. Switch to protobuf or try reducing the frequency of requests to mitigate the problem.
 
+- Where can I see what changes have been made in the LiveAPI
+We've collected feedback that changes to the API were hard to keep track of. Starting with LiveAPI v2.3 releasing with Season 24.1, you'll be able to find an additional changelog.txt
+
 - Will you be adding more events or API request methods?
 Yes! Stay tuned!
 
-We’re always looking for feedback from you! Got any suggestions, ideas or requests of your own? Share them with us! Tag us on Twitter and feel free to show us what you do with the Live API
+We’re always looking for feedback from you! Got any suggestions, ideas or requests of your own? Share them with us! Tag us on social media and feel free to show us what you do with the Live API!
 
