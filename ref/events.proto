@@ -621,6 +621,9 @@ message ChangeCamera
 
 		// Change camera to a player by name
 		string 	name = 2;
+
+		// Set it to a player by nucleus hash (similar to provided in CustomMatch_LobbyPlayer)
+		string nucleusHash = 3;
 	}
 }
 
@@ -743,7 +746,7 @@ message CustomMatch_GetLegendBanStatus
 {
 }
 
-// Request to set the banned legends in this match. This should be a comma-separated list and the list of all banned legends must be passed in each time in this request
+// Request to set the banned legends in this match. This should be a list of strings, and the list of all banned legends must be passed in each time in this request
 // In other words, the list that this request contains will always replace the Custom Match setting. Banned legends will persist with the Custom Match lobby. 
 // To reset the list of banned legends, send this request with an empty list
 // To obtain valid values for this list, use the CustomMatch_GetLegendBanStatus. The field LegendMatchStatus.reference is what can be submitted in this API call
