@@ -347,8 +347,8 @@ message SquadEliminated
 {
 	uint64 timestamp	= 1;
 	string category		= 2;
-	
 	repeated Player players = 3;
+	uint32 placement    = 4;
 }
 
 // Sent as soon as a player's ultimate is fully charged

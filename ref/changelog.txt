@@ -25,3 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Changed
 
 - `PauseToggle` messages are replied to with the `PauseStateChangeNotification` message instead of the generic `RequestStatus` message.
+
+### Added
+
+- `SquadEliminated` messages now include a `placement` field.
