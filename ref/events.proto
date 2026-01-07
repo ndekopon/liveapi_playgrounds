@@ -585,6 +585,38 @@ message WeaponSwitched
 	string newWeapon	= 5;
 }
 
+// Provides an update on care packages and their internal state
+message CarePackageLaunched
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	uint32				packageId	= 3;
+	Vector3 			position	= 4;
+	repeated string 	contents	= 5;
+}
+
+// Provides an update on care packages and their internal state
+message CarePackageLanded
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	uint32	packageId	= 3;
+	Vector3	position	= 4;
+}
+
+// Provides an update on care packages and their internal state
+message CarePackageOpened
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	uint32	packageId	= 3;
+	Vector3 position	= 4;
+	Player	player		= 5;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // Input messages:

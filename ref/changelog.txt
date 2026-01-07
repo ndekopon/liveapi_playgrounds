@@ -29,3 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Added
 
 - `SquadEliminated` messages now include a `placement` field.
+
+## LiveAPI 2.3 - Season 27.1 - 2026-01-06
+
+### Added
+
+- New messages for care package updates, including when a care package is launched (`CarePackageLaunched`), has landed (`CarePackageLanded`) and a player has opened it (`CarePackageOpened`)
