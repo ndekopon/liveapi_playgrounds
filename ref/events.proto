@@ -794,6 +794,12 @@ message CustomMatch_SendChat
 	string text = 1;
 }
 
+// Request to find and join a party server from the title screen.
+// Only works when the client is in the title screen and will fail otherwise.
+message JoinPartyServer
+{
+}
+
 
 // Envelope message for any Live API request
 // This allows a single uniform data structure for requests to be made and for the game to receive them
@@ -837,6 +843,8 @@ message Request
 		CustomMatch_SetEndRingExclusion customMatch_SetEndRingExclusion = 23;
 		CustomMatch_GetLegendBanStatus customMatch_GetLegendBanStatus = 24;
 		CustomMatch_SetLegendBan customMatch_SetLegendBan = 25;
+		
+		JoinPartyServer joinPartyServer = 31;
 
 	}
 }

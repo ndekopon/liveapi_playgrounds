@@ -35,3 +35,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Added
 
 - New messages for care package updates, including when a care package is launched (`CarePackageLaunched`), has landed (`CarePackageLanded`) and a player has opened it (`CarePackageOpened`)
+
+## LiveAPI 2.4 - Season 28 - 2026-02-10
+
+### Added
+
+- New request message "JoinPartyServer" to allow clients to continue from the title screen through LiveAPI. This enables more automation for tournament organizers wanting to script Custom Match lobbies.
