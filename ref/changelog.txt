@@ -41,3 +41,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Added
 
 - New request message "JoinPartyServer" to allow clients to continue from the title screen through LiveAPI. This enables more automation for tournament organizers wanting to script Custom Match lobbies.
+
+## LiveAPI 2.5 - Season 29 - 2026-05-05
+
+### Changed
+
+- Improved "CustomMatch_JoinLobby" request to provide additional error messaging. If a user makes a request with an invalid roleToken, the game will display appropriate error messaging and notify on the request status over LiveAPI. If the player is sitting in an existing lobby, the Custom Match UI will close and display a banner with a localized message. The string used through LiveAPI is unique and can be used to key on the type of error.
+
