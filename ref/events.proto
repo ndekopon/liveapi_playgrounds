@@ -617,6 +617,18 @@ message CarePackageOpened
 	Player	player		= 5;
 }
 
+// Event indicating that a player has been respawned from their deathbox
+// This event may fire alongside PlayerRespawnTeam but are separate to ensure API backward compatibility
+message RespawnFromDeathbox
+{
+	uint64 timestamp	= 1;
+	string category		= 2;
+
+	Player player		= 3;
+	repeated InventoryItem inventory	= 4;
+	repeated Player respawnedTeammates 	= 5;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // Input messages:

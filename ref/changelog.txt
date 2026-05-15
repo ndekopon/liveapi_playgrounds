@@ -44,7 +44,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## LiveAPI 2.5 - Season 29 - 2026-05-05
 
+### Added
+
+- New event message "RespawnFromDeathbox" that signals the use of the new Respawn from Deathbox feature. As noted, this event may fire alongside PlayerRespawnTeam but are kept separate to ensure API backward compatibility and specific actions related to the new feature
+
 ### Changed
 
 - Improved "CustomMatch_JoinLobby" request to provide additional error messaging. If a user makes a request with an invalid roleToken, the game will display appropriate error messaging and notify on the request status over LiveAPI. If the player is sitting in an existing lobby, the Custom Match UI will close and display a banner with a localized message. The string used through LiveAPI is unique and can be used to key on the type of error.
 
+- Changed message "RespawnFromDeathbox" to use `InventoryItem` to report accurate counts on items within the deathbox instead of just a string
