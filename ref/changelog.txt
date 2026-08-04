@@ -53,3 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Improved "CustomMatch_JoinLobby" request to provide additional error messaging. If a user makes a request with an invalid roleToken, the game will display appropriate error messaging and notify on the request status over LiveAPI. If the player is sitting in an existing lobby, the Custom Match UI will close and display a banner with a localized message. The string used through LiveAPI is unique and can be used to key on the type of error.
 
 - Changed message "RespawnFromDeathbox" to use `InventoryItem` to report accurate counts on items within the deathbox instead of just a string
+
+### Changed
+
+- Updated the "MatchStateEnd" event to also record whether or not the match was ended by an admin or ended naturally.
